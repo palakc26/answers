@@ -1,20 +1,8 @@
-# Operating Systems Practical
+# CLASSICAL CRYPTOGRAPHY
 
-Simple C++ programs for OS practicals and viva preparation.
+## C++
 
-## Programs
-
-* FCFS Scheduling
-* SJF Scheduling
-* Round Robin Scheduling
-* Thread Creation
-* Fork / Child Process
-* Parent-Child Process with PID
-* Fork with Wait
-
----
-
-## FCFS
+### 1. Caesar Cipher
 
 ```cpp
 #include <iostream>
@@ -22,43 +10,34 @@ using namespace std;
 
 int main()
 {
-    int n;
-    cout << "Enter number of processes: ";
-    cin >> n;
+    string text;
+    int shift;
 
-    int bt[20], wt[20], tat[20];
+    cout << "Enter text: ";
+    cin >> text;
 
-    for (int i = 0; i < n; i++)
+    cout << "Enter shift: ";
+    cin >> shift;
+
+    string result = "";
+
+    for (char c : text)
     {
-        cout << "Enter burst time of P" << i + 1 << ": ";
-        cin >> bt[i];
+        if (c >= 'A' && c <= 'Z')
+            result += (c - 'A' + shift) % 26 + 'A';
+        else if (c >= 'a' && c <= 'z')
+            result += (c - 'a' + shift) % 26 + 'a';
+        else
+            result += c;
     }
 
-    wt[0] = 0;
-
-    for (int i = 1; i < n; i++)
-        wt[i] = wt[i - 1] + bt[i - 1];
-
-    for (int i = 0; i < n; i++)
-        tat[i] = wt[i] + bt[i];
-
-    cout << "\nProcess\tBT\tWT\tTAT\n";
-
-    for (int i = 0; i < n; i++)
-    {
-        cout << "P" << i + 1 << "\t"
-             << bt[i] << "\t"
-             << wt[i] << "\t"
-             << tat[i] << endl;
-    }
+    cout << "Encrypted Text: " << result;
 
     return 0;
 }
 ```
 
----
-
-## SJF
+### 2. Rail Fence Cipher
 
 ```cpp
 #include <iostream>
@@ -66,62 +45,44 @@ using namespace std;
 
 int main()
 {
-    int n;
-    cout << "Enter number of processes: ";
-    cin >> n;
+    string text;
+    int rails;
 
-    int bt[20], wt[20], tat[20], p[20];
+    cout << "Enter text: ";
+    cin >> text;
 
-    for (int i = 0; i < n; i++)
+    cout << "Enter number of rails: ";
+    cin >> rails;
+
+    string fence[100];
+
+    int row = 0;
+    int direction = 1;
+
+    for (char c : text)
     {
-        p[i] = i + 1;
+        fence[row] += c;
 
-        cout << "Enter burst time of P" << i + 1 << ": ";
-        cin >> bt[i];
+        if (row == 0)
+            direction = 1;
+        else if (row == rails - 1)
+            direction = -1;
+
+        row += direction;
     }
 
-    for (int i = 0; i < n - 1; i++)
-    {
-        for (int j = i + 1; j < n; j++)
-        {
-            if (bt[i] > bt[j])
-            {
-                int temp = bt[i];
-                bt[i] = bt[j];
-                bt[j] = temp;
+    string result = "";
 
-                temp = p[i];
-                p[i] = p[j];
-                p[j] = temp;
-            }
-        }
-    }
+    for (int i = 0; i < rails; i++)
+        result += fence[i];
 
-    wt[0] = 0;
-
-    for (int i = 1; i < n; i++)
-        wt[i] = wt[i - 1] + bt[i - 1];
-
-    for (int i = 0; i < n; i++)
-        tat[i] = wt[i] + bt[i];
-
-    cout << "\nProcess\tBT\tWT\tTAT\n";
-
-    for (int i = 0; i < n; i++)
-    {
-        cout << "P" << p[i] << "\t"
-             << bt[i] << "\t"
-             << wt[i] << "\t"
-             << tat[i] << endl;
-    }
+    cout << "Encrypted Text: " << result;
 
     return 0;
 }
 ```
 
----
-
-## Round Robin
+### 3. Vigenere Cipher
 
 ```cpp
 #include <iostream>
@@ -129,240 +90,177 @@ using namespace std;
 
 int main()
 {
-    int n, quantum;
+    string text, key;
 
-    cout << "Enter number of processes: ";
-    cin >> n;
+    cout << "Enter text: ";
+    cin >> text;
 
-    int bt[20], rem[20];
+    cout << "Enter key: ";
+    cin >> key;
 
-    for (int i = 0; i < n; i++)
+    string result = "";
+
+    for (int i = 0; i < text.length(); i++)
     {
-        cout << "Enter burst time of P" << i + 1 << ": ";
-        cin >> bt[i];
+        char c = text[i];
+        int shift = key[i % key.length()] - 'A';
 
-        rem[i] = bt[i];
+        if (c >= 'A' && c <= 'Z')
+            result += (c - 'A' + shift) % 26 + 'A';
+        else
+            result += (c - 'a' + shift) % 26 + 'a';
     }
 
-    cout << "Enter time quantum: ";
-    cin >> quantum;
-
-    int time = 0;
-
-    while (true)
-    {
-        bool done = true;
-
-        for (int i = 0; i < n; i++)
-        {
-            if (rem[i] > 0)
-            {
-                done = false;
-
-                if (rem[i] > quantum)
-                {
-                    time += quantum;
-                    rem[i] -= quantum;
-                }
-                else
-                {
-                    time += rem[i];
-                    rem[i] = 0;
-
-                    cout << "P" << i + 1
-                         << " completed at time "
-                         << time << endl;
-                }
-            }
-        }
-
-        if (done)
-            break;
-    }
+    cout << "Encrypted Text: " << result;
 
     return 0;
 }
 ```
 
----
-
-## Thread
+### 4. Feistel Block Cipher
 
 ```cpp
 #include <iostream>
-#include <pthread.h>
-
 using namespace std;
 
-void* run(void* arg)
+int roundFunction(int right, int key)
 {
-    cout << "Thread is running" << endl;
+    return ((right << 6) | (right >> 2)) & 0xFF;
+}
 
-    return NULL;
+void feistelRound(int &left, int &right, int key)
+{
+    int temp = right;
+    right = left ^ roundFunction(right, key);
+    left = temp;
 }
 
 int main()
 {
-    pthread_t t;
+    int left = 0x5A;
+    int right = 0xA5;
+    int roundKey = 0x1F;
 
-    pthread_create(&t, NULL, run, NULL);
+    feistelRound(left, right, roundKey);
 
-    pthread_join(t, NULL);
-
-    cout << "Main function finished" << endl;
-
-    return 0;
-}
-```
-
-Compile:
-
-```bash
-g++ thread.cpp -o thread -pthread
-```
-
-Run:
-
-```bash
-./thread
-```
-
----
-
-## Fork
-
-```cpp
-#include <iostream>
-#include <unistd.h>
-
-using namespace std;
-
-int main()
-{
-    int pid;
-
-    pid = fork();
-
-    if (pid == 0)
-    {
-        cout << "I am the child process" << endl;
-    }
-    else if (pid > 0)
-    {
-        cout << "I am the parent process" << endl;
-    }
-    else
-    {
-        cout << "Fork failed" << endl;
-    }
+    cout << "Staged Block Sides:" << endl;
+    cout << "Left = " << hex << left << endl;
+    cout << "Right = " << hex << right << endl;
 
     return 0;
 }
 ```
 
----
+## Python
 
-## Parent Child PID
+### 1. Caesar Cipher
 
-```cpp
-#include <iostream>
-#include <unistd.h>
+```python
+def encrypt_caesar(text, shift):
+    result = ""
 
-using namespace std;
+    for c in text:
+        if c.isupper():
+            result += chr((ord(c) - ord('A') + shift) % 26 + ord('A'))
+        elif c.islower():
+            result += chr((ord(c) - ord('a') + shift) % 26 + ord('a'))
+        else:
+            result += c
 
-int main()
-{
-    int pid;
+    return result
 
-    pid = fork();
 
-    if (pid == 0)
-    {
-        cout << "Child process" << endl;
-        cout << "My PID: " << getpid() << endl;
-        cout << "My Parent PID: " << getppid() << endl;
-    }
-    else if (pid > 0)
-    {
-        cout << "Parent process" << endl;
-        cout << "My PID: " << getpid() << endl;
-        cout << "Child PID: " << pid << endl;
-    }
-    else
-    {
-        cout << "Fork failed" << endl;
-    }
+text = "DataSecurity2026"
+shift = 4
 
-    return 0;
-}
+print("Encrypted Text:", encrypt_caesar(text, shift))
 ```
 
----
+### 2. Rail Fence Cipher
 
-## Fork + Wait
+```python
+def encrypt_rail_fence(text, rails):
+    fence = [""] * rails
+    row = 0
+    direction = 1
 
-```cpp
-#include <iostream>
-#include <unistd.h>
-#include <sys/wait.h>
+    for c in text:
+        fence[row] += c
 
-using namespace std;
+        if row == 0:
+            direction = 1
+        elif row == rails - 1:
+            direction = -1
 
-int main()
-{
-    int pid = fork();
+        row += direction
 
-    if (pid == 0)
-    {
-        cout << "Child is running" << endl;
-    }
-    else if (pid > 0)
-    {
-        wait(NULL);
+    result = ""
 
-        cout << "Parent is running" << endl;
-    }
+    for r in fence:
+        result += r
 
-    return 0;
-}
+    return result
+
+
+text = input("Enter text: ")
+rails = int(input("Enter number of rails: "))
+
+print("Encrypted Text:", encrypt_rail_fence(text, rails))
 ```
 
----
+### 3. Vigenere Cipher
 
-## Quick Viva
+```python
+def encrypt_vigenere(text, key):
+    result = ""
+    key = key.upper()
+    key_len = len(key)
+    key_index = 0
 
-| Topic              | Crux                            |
-| ------------------ | ------------------------------- |
-| FCFS               | First come, first served        |
-| SJF                | Shortest burst time first       |
-| Round Robin        | Fixed time quantum              |
-| Thread             | Execution unit inside a process |
-| `pthread_create()` | Creates a thread                |
-| `pthread_join()`   | Waits for a thread              |
-| `fork()`           | Creates a child process         |
-| `fork() == 0`      | Child                           |
-| `fork() > 0`       | Parent                          |
-| `fork() < 0`       | Error                           |
-| `getpid()`         | Current process ID              |
-| `getppid()`        | Parent process ID               |
-| `wait()`           | Parent waits for child          |
-| WT                 | `TAT - BT`                      |
-| TAT                | `CT - AT`                       |
+    for c in text:
+        if c.isalpha():
+            shift = ord(key[key_index % key_len]) - ord('A')
 
-## Compilation
+            if c.isupper():
+                result += chr((ord(c) - ord('A') + shift) % 26 + ord('A'))
+            else:
+                result += chr((ord(c) - ord('a') + shift) % 26 + ord('a'))
 
-```bash
-g++ fcfs.cpp -o fcfs
-g++ sjf.cpp -o sjf
-g++ rr.cpp -o rr
-g++ thread.cpp -o thread -pthread
-g++ fork.cpp -o fork
-g++ parent_child.cpp -o parent_child
-g++ fork_wait.cpp -o fork_wait
+            key_index += 1
+        else:
+            result += c
+
+    return result
+
+
+text = "HELLO"
+key = "KEY"
+
+print("Encrypted Vigenere Text:", encrypt_vigenere(text, key))
 ```
 
-Run any program with:
+### 4. Feistel Block Cipher
 
-```bash
-./program_name
+```python
+def round_function(block, key):
+    return ((block << 6) | (block >> 2)) & 0xFF
+
+
+def feistel_round(left, right, key):
+    temp = right
+    right = left ^ round_function(right, key)
+    left = temp
+
+    return left, right
+
+
+left = 0x5A
+right = 0xA5
+round_key = 0x1F
+
+left, right = feistel_round(left, right, round_key)
+
+print("Feistel Block after one round:")
+print("Left =", hex(left))
+print("Right =", hex(right))
 ```
